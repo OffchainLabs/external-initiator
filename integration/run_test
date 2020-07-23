@@ -23,6 +23,10 @@ run_test() {
 
   login_chainlink
 
+  ./integration/test_ei_event "eth-qae-mock" "" "0xd34db33f"
+
+  return
+
   ./integration/test_ei_event "eth-mock-http"
   ./integration/test_ei_event "eth-mock-ws"
   ./integration/test_ei_event "hmy-mock-http"
@@ -37,7 +41,7 @@ run_test() {
   ./integration/test_ei_event "substrate-mock-ws" "$SUBSTRATE_OPERATOR_2_ACCOUNT_ID"
   ./integration/test_ei_event "substrate-mock-ws" "$SUBSTRATE_OPERATOR_3_ACCOUNT_ID"
 
-  stop_docker
+  # stop_docker
 
   title "Done running tests"
 }

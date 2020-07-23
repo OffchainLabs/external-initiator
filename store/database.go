@@ -56,6 +56,29 @@ func (arr SQLStringArray) Value() (driver.Value, error) {
 	return buf.String(), nil
 }
 
+// SQLBytes is a byte slice stored in the database as a string.
+type SQLBytes []byte
+
+// Scan implements the sql Scanner interface.
+func (bytes *SQLBytes) Scan(src interface{}) error {
+	if src == nil {
+		*bytes = nil
+	}
+
+	str, ok := src.(string)
+	if !ok {
+		return errors.New("failed to scan string")
+	}
+
+	*bytes = []byte(str)
+	return nil
+}
+
+// Value implements the driver Valuer interface.
+func (bytes SQLBytes) Value() (driver.Value, error) {
+	return string(bytes), nil
+}
+
 // Client holds a connection to the database.
 type Client struct {
 	db *gorm.DB
@@ -115,6 +138,10 @@ func (client Client) prepareSubscription(rawSub *Subscription) (*Subscription, e
 		}
 	case "binance-smart-chain":
 		if err := client.db.Model(&sub).Related(&sub.BinanceSmartChain).Error; err != nil {
+			return nil, err
+		}
+	case "eth-query-and-execute":
+		if err := client.db.Model(&sub).Related(&sub.EthQae).Error; err != nil {
 			return nil, err
 		}
 	}
@@ -253,6 +280,7 @@ type Subscription struct {
 	Substrate         SubstrateSubscription
 	Ontology          OntSubscription
 	BinanceSmartChain BinanceSmartChainSubscription
+	EthQae            EthQaeSubscription
 }
 
 type EthSubscription struct {
@@ -284,4 +312,13 @@ type BinanceSmartChainSubscription struct {
 	gorm.Model
 	SubscriptionId uint
 	Addresses      SQLStringArray
+}
+
+type EthQaeSubscription struct {
+	gorm.Model
+	SubscriptionId uint
+	Address        string
+	ABI            SQLBytes
+	ResponseKey    string
+	MethodName     string
 }
