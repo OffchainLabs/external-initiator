@@ -101,6 +101,10 @@ func (client Client) prepareSubscription(rawSub *Subscription) (*Subscription, e
 		if err := client.db.Model(&sub).Related(&sub.Ethereum).Error; err != nil {
 			return nil, err
 		}
+	case "arbitrum":
+		if err := client.db.Model(&sub).Related(&sub.Arbitrum).Error; err != nil {
+			return nil, err
+		}
 	case "tezos":
 		if err := client.db.Model(&sub).Related(&sub.Tezos).Error; err != nil {
 			return nil, err
@@ -253,6 +257,7 @@ type Subscription struct {
 	EndpointName      string
 	Endpoint          Endpoint `gorm:"-"`
 	Ethereum          EthSubscription
+	Arbitrum 		  ArbSubscription
 	Tezos             TezosSubscription
 	Substrate         SubstrateSubscription
 	Ontology          OntSubscription
@@ -261,6 +266,13 @@ type Subscription struct {
 }
 
 type EthSubscription struct {
+	gorm.Model
+	SubscriptionId uint
+	Addresses      SQLStringArray
+	Topics         SQLStringArray
+}
+
+type ArbSubscription struct {
 	gorm.Model
 	SubscriptionId uint
 	Addresses      SQLStringArray

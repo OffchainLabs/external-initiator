@@ -59,6 +59,7 @@ services:
       - EI_CHAINLINKURL=http://chainlink:6688/
       - EI_MOCK=true
     command:
+      - '{"name":"arb-mock-http","type":"arbitrum","url":"http://mock:8080/rpc/arb","refreshInterval":600}'
       - '{"name":"eth-mock-http","type":"ethereum","url":"http://mock:8080/rpc/eth","refreshInterval":600}'
       - '{"name":"eth-mock-ws","type":"ethereum","url":"ws://mock:8080/ws/eth"}'
       - '{"name":"hmy-mock-http","type":"harmony","url":"http://mock:8080/rpc/hmy","refreshInterval":600}'

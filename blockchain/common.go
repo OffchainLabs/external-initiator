@@ -24,6 +24,7 @@ var blockchains = []string{
 	ONT,
 	BSC,
 	NEAR,
+	ARB,
 }
 
 type Params struct {
@@ -47,6 +48,8 @@ func CreateJsonManager(t subscriber.Type, sub store.Subscription) (subscriber.Js
 		return createSubstrateManager(t, sub)
 	case NEAR:
 		return createNearManager(t, sub)
+	case ARB:
+		return createArbManager(t, sub)
 	}
 
 	return nil, fmt.Errorf("unknown blockchain type %v for JSON manager", sub.Endpoint.Type)
@@ -97,7 +100,7 @@ func ValidBlockchain(name string) bool {
 
 func GetValidations(t string, params Params) []int {
 	switch t {
-	case ETH, HMY:
+	case ETH, HMY, ARB:
 		return []int{
 			len(params.Addresses) + len(params.Topics),
 		}
@@ -130,6 +133,11 @@ func CreateSubscription(sub *store.Subscription, params Params) {
 	switch sub.Endpoint.Type {
 	case ETH, HMY:
 		sub.Ethereum = store.EthSubscription{
+			Addresses: params.Addresses,
+			Topics:    params.Topics,
+		}
+	case ARB:
+		sub.Arbitrum = store.ArbSubscription{
 			Addresses: params.Addresses,
 			Topics:    params.Topics,
 		}
